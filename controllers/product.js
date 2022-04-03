@@ -13,8 +13,12 @@ export const create = async (req, res) => {
 }
 
 export const list = async (req, res) => { 
+    const limitNumber = 20
+    const limit = req.query.limit ? +req.query.limit : limitNumber;
+    // const sortBy = req.query.sortBy ? req.query.sortBy : '_id';
+    // const order = req.query.order ? req.query.order : 'desc';
     try {
-        const products = await Product.find();
+        const products = await Product.find().limit(limit).select("-__v -createdAt -updatedAt");
         res.json(products);
     } catch (error) {
         res.status(400).json({
@@ -36,4 +40,14 @@ export const remove = async (req, res) => {
 export const update = async (req, res) => {
     const product = await Product.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true })
     res.json(product)
+}
+
+export const search = async (req, res) => {
+    Product.find({
+        $text: { $search: req.query.q }
+    })
+    .exec(function(err, data) {
+        if(err) res.json(err)
+        res.json(data)
+    });
 }
