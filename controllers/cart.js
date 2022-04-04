@@ -1,8 +1,17 @@
+import mongoose from 'mongoose';
 import Cart from '../modals/cart';
+import Product from '../modals/product';
 
 export const list = async (req, res) => {
     try {
         const cart = await Cart.findOne({user: req.params.user_id})
+        const ids = []
+        cart.cartItems.forEach(item => ids.push(item.product))
+        const listProduct = await Product.find({
+            '_id': { $in: ids }
+        })
+        console.log(listProduct)
+        cart.cartItems.forEach((item, index) => item.product = listProduct[index])
         res.json(cart.cartItems)
     } catch (error) {
         console.log(error);        
