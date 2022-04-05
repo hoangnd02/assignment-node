@@ -13,12 +13,12 @@ export const create = async (req, res) => {
 }
 
 export const list = async (req, res) => { 
-    const limitNumber = 20
+    const limitNumber = 8
     const limit = req.query.limit ? +req.query.limit : limitNumber;
-    // const sortBy = req.query.sortBy ? req.query.sortBy : '_id';
-    // const order = req.query.order ? req.query.order : 'desc';
+    const page = req.query.page ? +req.query.page : 1;
+    const skip = (page - 1) * limit;
     try {
-        const products = await Product.find().limit(limit).select("-__v -createdAt -updatedAt");
+        const products = await Product.find().skip(skip).limit(limit).select("-__v -createdAt -updatedAt");
         res.json(products);
     } catch (error) {
         res.status(400).json({
@@ -43,11 +43,29 @@ export const update = async (req, res) => {
 }
 
 export const search = async (req, res) => {
+    const limitNumber = 20
+    const limit = req.query.limit ? +req.query.limit : limitNumber;
     Product.find({
         $text: { $search: req.query.q }
-    })
+    }).limit(limit)
     .exec(function(err, data) {
         if(err) res.json(err)
         res.json(data)
     });
+}
+
+//pagenation product
+export const pagination = async (req, res) => {
+    const limitNumber = 20
+    const limit = req.query.limit ? +req.query.limit : limitNumber;
+    const page = req.query.page ? +req.query.page : 1;
+    const skip = (page - 1) * limit;
+    try {
+        const products = await Product.find().skip(skip).limit(limit).select("-__v -createdAt -updatedAt");
+        res.json(products);
+    } catch (error) {
+        res.status(400).json({
+            message: "Lỗi không tìm được sản phẩm"
+        })
+    }
 }

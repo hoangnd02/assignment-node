@@ -22,6 +22,7 @@ export const addCart = async (req, res) => {
     try {
         const cart = await Cart.findOne({user: req.params.user_id})
         if (cart) {
+            console.log(true);
             const newProduct = req.body
             let checkProduct = false
             cart.cartItems.map(product => {
@@ -37,7 +38,12 @@ export const addCart = async (req, res) => {
             console.log(newCart, 28)
             res.json(newCart.cartItems)
         } else {
-            const cart = await new Cart(req.body).save()
+            const newCart = {
+                user: req.params.user_id,
+                cartItems: [req.body]
+            }
+            const cart = await new Cart(newCart).save()
+            console.log(false)
             res.json(cart.cartItems)
         }
     } catch (error) {
