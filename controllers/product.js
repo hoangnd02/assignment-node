@@ -17,9 +17,10 @@ export const list = async (req, res) => {
     const limit = req.query.limit ? +req.query.limit : limitNumber;
     const page = req.query.page ? +req.query.page : 1;
     const skip = (page - 1) * limit;
-    console.log(skip);
+    const filter = req.query
     try {
-        const products = await Product.find().skip(skip).limit(limit).select("-__v -createdAt -updatedAt");
+        console.log((req.query ? req.query : ""), "hoang");
+        const products = await Product.find(filter).skip(skip).limit(limit).select("-__v -createdAt -updatedAt");
         res.json(products);
     } catch (error) {
         res.status(400).json({
