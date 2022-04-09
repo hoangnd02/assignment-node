@@ -64,11 +64,9 @@ export const signinWithGG = async (req, res) => {
     const {email, displayName} = req.body
     try {
         const user = await User.findOneAndUpdate({email}, {name: displayName, email}, {new: true}).exec();
-        console.log(user);
         if(user) {
             res.json(user)
         } else {
-            console.log({name: displayName, email})
             try {
                 const newUser = await new User({name: displayName, email}).save()
                 res.json(newUser)

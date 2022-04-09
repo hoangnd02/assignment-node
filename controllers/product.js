@@ -16,11 +16,11 @@ export const list = async (req, res) => {
     const limitNumber = 8
     const limit = req.query.limit ? +req.query.limit : limitNumber;
     const page = req.query.page ? +req.query.page : 1;
-    const skip = (page - 1) * limit;
+    const skip = (page - 1) * limitNumber;
+    console.log(skip, limit);
     const filter = req.query
     try {
-        console.log((req.query ? req.query : ""), "hoang");
-        const products = await Product.find(filter).skip(skip).limit(limit).select("-__v -createdAt -updatedAt");
+        const products = await Product.find(filter).skip(skip).limit(limit).select("-__v -category -createdAt -updatedAt");
         res.json(products);
     } catch (error) {
         res.status(400).json({
